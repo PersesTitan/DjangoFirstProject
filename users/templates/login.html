@@ -4,12 +4,30 @@
     <meta charset="UTF-8">
     <title>Login</title>
 </head>
+<style>
+    div.error {
+        color: red
+    }
+
+    body {
+        text-align: center;
+    }
+</style>
 <body>
-  <h1>Login</h1>
-  <form method="post">
-    아이디 : <input><br>
-    비밀번호 : <input type="password"><br>
-    <p><button type="submit">로그인</button></p>
-  </form>
+    <form method="post">
+      <table>
+        <tr><th colspan="2">로그인</th></tr>
+        <tr><td>아이디</td><td><input name="id"></td></tr>
+        <tr><td>비밀번호</td><td><input name="password" type="password"></td></tr>
+        {% if messages %}
+        {% for message in messages %}
+            <tr><td colspan="2">
+                <div class="{{ message.tags }}">{{ message.message }}</div>
+            </td></tr>
+        {% endfor %}
+        {% endif %}
+        <tr><th colspan="2"><br><button type="submit">로그인</button></th></tr>
+      </table>
+    </form>
 </body>
 </html>
