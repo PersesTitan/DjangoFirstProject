@@ -4,9 +4,12 @@ import os
 import sys
 
 
-def get_class(pa: str, class_name: str, url: str, path):
+def get_class(pa: str, class_name: str, url: str, path, name=None):
     exec(f"from {pa}.views import {class_name}")
-    return eval(f"path(\'{url}\', {class_name}.as_view())")
+    if name is None:
+        return eval(f"path(\'{url}\', {class_name}.as_view())")
+    else:
+        return eval(f"path(\'{url}\', {class_name}.as_view(), name=\"{name}\")")
 
 
 class Make:
@@ -34,8 +37,11 @@ class Make:
                         start = line.index("class") + len("class")
                         end = line.index("(")
 
-                        remark = line[line.index("#") + 1:].strip()
-                        path_list.append(get_class(dirs, line[start:end].strip(), remark, path))
+                        remark = line[line.index("#") + 1:].strip().split()
+                        if len(remark) == 1:
+                            path_list.append(get_class(dirs, line[start:end].strip(), remark[0], path))
+                        else:
+                            path_list.append(get_class(dirs, line[start:end].strip(), remark[0], path, remark[1]))
         return path_list
 
 
