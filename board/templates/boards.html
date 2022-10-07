@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>블로그</title>
+</head>
+<body>
+    <h1>블로그</h1>
+    <ul>
+      {% for board in boards %}
+        <fieldset>
+            <legend><a href="{{ l.id }}">{{ board.title }}</a></legend>
+        </fieldset>
+      {% endfor %}
+    </ul>
+</body>
+</html>
