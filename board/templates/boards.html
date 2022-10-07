@@ -3,9 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <title>블로그</title>
+    <style>
+        body {
+            text-align: center;
+        }
+
+        #username, a {
+            margin: 10px;
+            padding: 10px;
+            text-align: right;
+        }
+        a#write {
+            text-decoration: none;
+            border-radius: 10px;
+            background-color: blue;
+            color: white;
+        }
+
+        a#write:hover {
+            background-color: red;
+            color: black;
+        }
+    </style>
 </head>
 <body>
+    <p id="username">
+        {% if username %}
+            <b>{{ username }}</b>님 환영합니다!
+        {% endif %}
+        <a id="write" href="create/">새 글쓰기</a>
+    </p>
+    <hr>
     <h1>블로그</h1>
+    <hr>
+    {% if boards %}
     <ul>
       {% for board in boards %}
         <fieldset>
@@ -13,5 +44,8 @@
         </fieldset>
       {% endfor %}
     </ul>
+    {% else %}
+    <h2>게시물이 존재하지 않습니다.</h2>
+    {% endif %}
 </body>
 </html>
