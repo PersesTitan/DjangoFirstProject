@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ board.title }}</title>
+    <style>
+        body {
+            padding-left: 50px;
+            padding-right: 50px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 6.25em;
+            border: none;
+            resize: none;
+            background-color: #eeeeee;
+        }
+
+        a.menu {
+            text-decoration: none;
+            border-radius: 5px;
+            background-color: blue;
+            color: white;
+            padding: 5px 10px;
+            font-size: 0.9em;
+        }
+
+        a.menu:hover {
+            background-color: red;
+            color: black;
+        }
+
+        .remove {
+            text-decoration: none;
+            border-radius: 5px;
+            background-color: red;
+            color: white;
+            padding: 5px 10px;
+            font-size: 0.9em;
+        }
+
+        .remove:hover {
+            background-color: blue;
+            color: black;
+        }
+
+        div.error {
+            color: red
+        }
+    </style>
+</head>
+<body>
+    <h1>{{ board.title }}</h1>
+    <p><b>작성자 : {{ board.username }}</b></p>
+    <b>작성일 : {{ board.create_date | date:'Y년 m월 d일 - h시 i분' }}</b><br>
+    <b>최근 수정일 : {{ board.update_date | date:'Y년 m월 d일 - h시 i분'  }}</b>
+    <hr>
+    <p>{{ board.content }}</p>
+    <br><br><br>
+    <hr>
+
+    {% if commands %}
+    {% for command in commands %}
+        <fieldset>
+            <b style="font-size: 0.7em">작성자 : {{ command.value.user.username }}</b><br>
+            <div style="font-size: 0.7em">
+                {{ command.value.create_date | date:'Y년 m월 d일 h:i' }} |
+                {{ command.value.update_date | date:'Y년 m월 d일 h:i' }}
+            </div>
+            <hr>
+            {{ command.value.content }}
+            {% if command.login_check %}
+            <form method="post">
+                <input name="command_id" value="{{ command.value.id }}" type="hidden">
+                <button type="submit" name="command_remove">삭제</button>
+            </form>
+            {% endif %}
+        </fieldset>
+    {% endfor %}
+    {% endif %}
+
+    <br>
+    <form method="post">
+        <textarea name="command" placeholder="댓글 내용"></textarea>
+        {% if messages %}
+        {% for message in messages %}
+            <div class="{{ message.tags }}">{{ message.message }}</div>
+        {% endfor %}
+        {% endif %}
+        <button name="command_send" style="submit">댓글 올리기</button>
+        <button name="good" style="submit">
+            {{ good }} {% if good_check %} 취소하기 {% else %} 좋아요 {% endif %}
+        </button>
+    </form>
+    <br>
+    <a href="/boards" class="menu">메인 메뉴</a>
+    {% if check_user %}
+        <a href="edit/" class="menu">편집</a>
+        <a href="remove/" class="remove">삭제</a>
+    {% endif %}
+</body>
+</html>
