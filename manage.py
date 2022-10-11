@@ -13,6 +13,7 @@ def get_class(pa: str, class_name: str, url: str, path, name=None):
 
 
 class Make:
+
     @classmethod
     def add_INSTALLED_APPS(cls, pwd=str(os.getcwd())):
         INSTALLED_APPS_LIST = list()
@@ -24,7 +25,7 @@ class Make:
                         start = line.index("class") + len("class")
                         end = line.index("(")
                         INSTALLED_APPS_LIST.append(f"{dirs}.apps.{line[start:end].strip()}")
-        return INSTALLED_APPS_LIST
+        return set(INSTALLED_APPS_LIST)
 
     @classmethod
     def add_path(cls, path, pwd=str(os.getcwd())):
@@ -42,7 +43,7 @@ class Make:
                             path_list.append(get_class(dirs, line[start:end].strip(), remark[0], path))
                         else:
                             path_list.append(get_class(dirs, line[start:end].strip(), remark[0], path, remark[1]))
-        return path_list
+        return set(path_list)
 
 
 def main():
