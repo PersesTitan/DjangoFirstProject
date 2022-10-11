@@ -15,6 +15,7 @@
 </style>
 <body>
     <form method="post">
+    {% csrf_token %}
       <table>
         <tr><th colspan="2">로그인</th></tr>
         <tr><td>아이디</td><td><input name="id"></td></tr>
