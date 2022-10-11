@@ -7,7 +7,16 @@ from users.models import User
 class Board(models.Model):
     title = models.TextField(blank=False)
     content = models.TextField(blank=False)
-    good = models.IntegerField(default=0)   # 좋아요
     create_date = models.DateTimeField(auto_now_add=True)
     update_date = models.DateTimeField(auto_now=True)
+    username = models.TextField(blank=False)
+    good = models.ManyToManyField('users.User', related_name='board_good')
+    user = models.ForeignKey(User, models.CASCADE)
+    command = models.ManyToManyField('Command', related_name='command')
+
+
+class Command(models.Model):
+    create_date = models.DateTimeField(auto_now_add=True)
+    update_date = models.DateTimeField(auto_now=True)
+    content = models.TextField(blank=False)
     user = models.ForeignKey(User, models.CASCADE)
