@@ -1,5 +1,6 @@
 import uuid
 
+from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.db.models import Q
 from django.shortcuts import render, redirect
@@ -18,7 +19,7 @@ def set_id(key, value):
         # 존재하는 값 일때 삭제
         for k, v in ID_REPOSITORY.items():
             if v == value:
-                del ID_REPOSITORY[value]
+                del ID_REPOSITORY[key]
     ID_REPOSITORY[key] = value
 
 
@@ -29,7 +30,7 @@ def check_blank(li: str, kind: str, request):
 
 
 # Create your views here.
-@method_decorator(csrf_exempt, name='dispatch')
+# @login_required
 class LoginUser(View):  # users/login/    login
     def get(self, request):
         return render(request, 'login.html')
@@ -37,15 +38,16 @@ class LoginUser(View):  # users/login/    login
     def post(self, request):
         data = request.POST
         username, password = data["id"], data["password"]
-        # user = authenticate(request, username=username, password=password)
         user = User.objects.filter(Q(username=username) & Q(password=password))
         if len(user) == 0:
             messages.error(request, '아이디 또는 비밀번호가 일치하지 않습니다.')
-            return redirect('login')
+            return redirect(request.META['HTTP_REFERER'])
         else:
             UUID = str(uuid.uuid4())
             set_id(UUID, user[0])
-            response = redirect('boards')
+
+            url = request.GET.get('next')
+            response = redirect('boards' if (url is None or not url) else url)
             response.set_cookie('id', UUID)
             return response
 
@@ -64,10 +66,10 @@ class CreateUsers(View):  # users/singup/   singup
 
             password_check = data["password-check"]
             b = False
-            b = b or check_blank(username, "아이디", request)
-            b = b or check_blank(password, "비밀번호", request)
-            b = b or check_blank(email, "비밀번호 확인", request)
-            b = b or check_blank(email, "이메일", request)
+            b = check_blank(username, "아이디", request) or b
+            b = check_blank(password, "비밀번호", request) or b
+            b = check_blank(email, "비밀번호 확인", request) or b
+            b = check_blank(email, "이메일", request) or b
 
             if password_check != password:
                 messages.error(request, "비밀번호가 일치하지 않습니다.")
