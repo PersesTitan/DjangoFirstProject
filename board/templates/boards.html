@@ -13,6 +13,7 @@
             padding: 10px;
             text-align: right;
         }
+
         a#write {
             text-decoration: none;
             border-radius: 10px;
@@ -24,6 +25,14 @@
             background-color: red;
             color: black;
         }
+
+        fieldset {
+            text-align: left;
+        }
+
+        div.good {
+            color: red;
+        }
     </style>
 </head>
 <body>
@@ -31,7 +40,7 @@
         {% if username %}
             <b>{{ username }}</b>님 환영합니다!
         {% endif %}
-        <a id="write" href="create/">새 글쓰기</a>
+        <a id="write" href="add">새 글쓰기</a>
     </p>
     <hr>
     <h1>블로그</h1>
@@ -40,7 +49,11 @@
     <ul>
       {% for board in boards %}
         <fieldset>
-            <legend><a href="{{ l.id }}">{{ board.title }}</a></legend>
+            <legend><h3><a href="{{ board.id }}" style="text-decoration: none; margin: 10px;">{{ board.title }}</a></h3></legend>
+            작성자 : <b>{{ board.username }}</b><br>
+            <div class="good">좋아요 : {{ board.good }}</div>
+            생성된 날짜 : {{ board.create_date | date:'Y년 m월 d일 - h시 i분' }}<br>
+            수정된 날자 : {{ board.update_date | date:'Y년 m월 d일 - h시 i분' }}
         </fieldset>
       {% endfor %}
     </ul>
