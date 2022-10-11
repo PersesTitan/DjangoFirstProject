@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>게시판 편집</title>
+    <style>
+      textarea, input {
+          width: 90%;
+          resize: none;
+      }
+
+      textarea {
+          height: 10em;
+      }
+
+      div.error {
+          color: red
+      }
+
+      button {
+          font-size: 1.5em;
+          border-radius: 10px;
+          background-color: blue;
+          color: white;
+      }
+
+      button:hover {
+          background-color: red;
+          color: black;
+      }
+  </style>
+</head>
+<body>
+  <h1>게시판 편집</h1>
+  <hr>
+  <form method="post">
+        <input name="title" style="font-size: 1.5em" placeholder="제목" value="{{ title }}">
+        <p><textarea name="content" placeholder="내용">{{ content }}</textarea></p>
+        {% if messages %}
+            {% for message in messages %}
+            <div class="{{ message.tags }}">{{ message.message }}</div>
+            {% endfor %}
+        {% endif %}
+        <p><button type="submit">게시</button></p>
+    </form>
+</body>
+</html>
