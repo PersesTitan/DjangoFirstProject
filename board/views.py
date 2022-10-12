@@ -120,7 +120,7 @@ class EditBoard(View):  # boards/<int:board_id>/edit/    board-edit
     def get(self, request, board_id):
         board = Board.objects.get(pk=board_id)
         user = get_user(request)
-        if user is None:
+        if user is None or board.user != user:
             return redirect(f'/users/login/?next=/boards/{board_id}/edit/')
         else:
             content = {

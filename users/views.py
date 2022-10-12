@@ -1,6 +1,5 @@
 import uuid
 
-from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.db.models import Q
 from django.shortcuts import render, redirect
