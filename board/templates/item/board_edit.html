@@ -28,6 +28,19 @@
           background-color: red;
           color: black;
       }
+
+      a.menu {
+            text-decoration: none;
+            border-radius: 5px;
+            background-color: blue;
+            color: white;
+            padding: 5px 10px;
+            font-size: 0.9em;
+        }
+
+        a.menu:hover {
+            background-color: red;
+        }
   </style>
 </head>
 <body>
@@ -43,5 +56,6 @@
         {% endif %}
         <p><button type="submit">게시</button></p>
     </form>
+    <a class="menu" href="/boards/{{ board_id }}">취소</a>
 </body>
 </html>

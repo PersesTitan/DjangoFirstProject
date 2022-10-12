@@ -33,6 +33,18 @@
         div.good {
             color: red;
         }
+
+        a.page {
+            text-decoration: none;
+            color: black;
+            background-color: LightGray;
+            border-radius: 10%;
+        }
+
+        a.page:hover {
+            background-color: Gray;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -51,7 +63,7 @@
         <fieldset>
             <legend><h3><a href="{{ board.id }}" style="text-decoration: none; margin: 10px;">{{ board.title }}</a></h3></legend>
             작성자 : <b>{{ board.username }}</b><br>
-            <div class="good">좋아요 : {{ board.good }}</div>
+            <div class="good">좋아요 ♥ {{ board.good }}</div>
             생성된 날짜 : {{ board.create_date | date:'Y년 m월 d일 - h시 i분' }}<br>
             수정된 날자 : {{ board.update_date | date:'Y년 m월 d일 - h시 i분' }}
         </fieldset>
@@ -60,5 +72,12 @@
     {% else %}
     <h2>게시물이 존재하지 않습니다.</h2>
     {% endif %}
+    <br><br>
+    {% if page_list %}
+    {% for page in page_list %}
+        <a href="?page={{ page }}" class="page">{{ page }}</a>
+    {% endfor %}
+    {% endif %}
+    <br><br>
 </body>
 </html>

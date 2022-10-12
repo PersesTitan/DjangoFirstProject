@@ -1,3 +1,4 @@
+from django.core.paginator import Paginator
 from django.shortcuts import render, redirect
 from django.utils.decorators import method_decorator
 from django.views import View
@@ -14,16 +15,23 @@ def get_user(request):
 # Create your views here.
 class ListBoard(View):  # boards/   boards
     def get(self, request):
+        page = request.GET.get('page', 1)
         user = get_user(request)
         content = {}
         if user is not None:
             content["username"] = user.username
+
+        board_list = Board.objects.order_by('-create_date')
         li = list()
-        for value, board in zip(Board.objects.values(), Board.objects.all()):
+        for value, board in zip(board_list.values(), board_list.all()):
             value['good'] = len(board.good.all())
             li.append(value)
 
-        content['boards'] = li
+        paginator = Paginator(li, 5)
+        page = paginator.get_page(page)
+
+        content['boards'] = page.object_list
+        content['page_list'] = paginator.page_range
         return render(request, 'boards.html', content)
 
 
@@ -50,7 +58,7 @@ class CreateBoard(View):  # boards/add/  board-add
         b = check_blank(content, "내용", request) or b
 
         if b:
-            return redirect('board-add')
+            return redirect(request.META['HTTP_REFERER'])
         Board.objects.create(
             title=title,
             content=content,
@@ -61,7 +69,7 @@ class CreateBoard(View):  # boards/add/  board-add
 
 
 @method_decorator(csrf_exempt, name='dispatch')
-class OneBoard(View):   # boards/<int:board_id>/    board-item
+class OneBoard(View):  # boards/<int:board_id>/    board-item
     def get(self, request, board_id):
         board = Board.objects.get(pk=board_id)
         user = get_user(request)
@@ -75,8 +83,7 @@ class OneBoard(View):   # boards/<int:board_id>/    board-item
         context = {"board": board,
                    "good": len(board.good.all()),
                    "commands": commands,
-                   "check_user": check_user
-                   }
+                   "check_user": check_user}
         if (user is not None) and (user in board.good.all()):
             context["good_check"] = True
         return render(request, 'item/board_item.html', context)
@@ -116,7 +123,11 @@ class EditBoard(View):  # boards/<int:board_id>/edit/    board-edit
         if user is None:
             return redirect(f'/users/login/?next=/boards/{board_id}/edit/')
         else:
-            content = {"title": board.title, "content": board.content}
+            content = {
+                "title": board.title,
+                "content": board.content,
+                "board_id": board_id
+            }
             return render(request, 'item/board_edit.html', content)
 
     def post(self, request, board_id):
@@ -137,7 +148,7 @@ class EditBoard(View):  # boards/<int:board_id>/edit/    board-edit
 
 
 @method_decorator(csrf_exempt, name='dispatch')
-class RemoveBoard(View):    # boards/<int:board_id>/remove/    board-remove
+class RemoveBoard(View):  # boards/<int:board_id>/remove/    board-remove
     def get(self, request, board_id):
         user = get_user(request)
         board = Board.objects.get(pk=board_id)

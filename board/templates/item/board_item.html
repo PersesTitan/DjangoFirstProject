@@ -28,7 +28,6 @@
 
         a.menu:hover {
             background-color: red;
-            color: black;
         }
 
         .remove {
@@ -42,7 +41,6 @@
 
         .remove:hover {
             background-color: blue;
-            color: black;
         }
 
         div.error {
@@ -56,7 +54,7 @@
     <b>작성일 : {{ board.create_date | date:'Y년 m월 d일 - h시 i분' }}</b><br>
     <b>최근 수정일 : {{ board.update_date | date:'Y년 m월 d일 - h시 i분'  }}</b>
     <hr>
-    <p>{{ board.content }}</p>
+    <p>{{ board.content|linebreaksbr }}</p>
     <br><br><br>
     <hr>
 
@@ -69,7 +67,7 @@
                 {{ command.value.update_date | date:'Y년 m월 d일 h:i' }}
             </div>
             <hr>
-            {{ command.value.content }}
+            {{ command.value.content|linebreaksbr }}
             {% if command.login_check %}
             <form method="post">
                 <input name="command_id" value="{{ command.value.id }}" type="hidden">
@@ -90,7 +88,7 @@
         {% endif %}
         <button name="command_send" style="submit">댓글 올리기</button>
         <button name="good" style="submit">
-            {{ good }} {% if good_check %} 취소하기 {% else %} 좋아요 {% endif %}
+            ♥ ️{{ good }} {% if good_check %} 취소하기 {% else %} 좋아요 {% endif %}
         </button>
     </form>
     <br>
