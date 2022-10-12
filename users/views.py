@@ -18,8 +18,8 @@ def set_id(key, value):
     if len(ID_REPOSITORY) != 0 and value in list(ID_REPOSITORY.values()):
         # 존재하는 값 일때 삭제
         for k, v in ID_REPOSITORY.items():
-            if v == value:
-                del ID_REPOSITORY[key]
+            if ID_REPOSITORY[k] == value:
+                del ID_REPOSITORY[k]
     ID_REPOSITORY[key] = value
 
 
