@@ -11,6 +11,7 @@ class Board(models.Model):
     update_date = models.DateTimeField(auto_now=True)
     username = models.TextField(blank=False)
     good = models.ManyToManyField('users.User', related_name='board_good')
+    good_count = models.IntegerField(default=0)
     user = models.ForeignKey(User, models.CASCADE)
     command = models.ManyToManyField('Command', related_name='command')
 
