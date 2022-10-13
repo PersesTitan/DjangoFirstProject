@@ -8,13 +8,19 @@
             text-align: center;
         }
 
+        .right {
+            display: block;
+            margin-left: 50px;
+            text-align: left;
+        }
+
         #username, a {
             margin: 10px;
             padding: 10px;
             text-align: right;
         }
 
-        a#write {
+        a.write {
             text-decoration: none;
             border-radius: 10px;
             background-color: blue;
@@ -50,20 +56,42 @@
 <body>
     <p id="username">
         {% if username %}
+            <a href="/users/login/" class="write">
             <b>{{ username }}</b>님 환영합니다!
+            </a>
+        {% else %}
+            <a href="/users/login/" class="write">로그인</a>
         {% endif %}
-        <a id="write" href="add">새 글쓰기</a>
+        <a class="write" href="add">새 글쓰기</a>
     </p>
     <hr>
     <h1>블로그</h1>
     <hr>
+    <form method="get">
+        <div class="right">
+            <p><input name="search" value="{{ now_search }}"><button style="submit">검색</button></p>
+            <select style="submit" name="sort">
+            {% for key in sort_list %}
+                {% for k, v in key.items %}
+                {% if v.check %}
+                    <option value="{{ k }}" selected>{{ v.name }}</option>
+                {% else %}
+                    <option value="{{ k }}">{{ v.name }}</option>
+                {% endif %}
+                {% endfor %}
+            {% endfor %}
+        </select>
+        <input type="hidden" name="page" value="{{ now_page }}">
+        <button style="submit">정렬</button>
+        </div>
+    </form>
     {% if boards %}
     <ul>
       {% for board in boards %}
         <fieldset>
             <legend><h3><a href="{{ board.id }}" style="text-decoration: none; margin: 10px;">{{ board.title }}</a></h3></legend>
             작성자 : <b>{{ board.username }}</b><br>
-            <div class="good">좋아요 ♥ {{ board.good }}</div>
+            <div class="good">좋아요 ♥ {{ board.good_count }}</div>
             생성된 날짜 : {{ board.create_date | date:'Y년 m월 d일 - h시 i분' }}<br>
             수정된 날자 : {{ board.update_date | date:'Y년 m월 d일 - h시 i분' }}
         </fieldset>
@@ -73,11 +101,13 @@
     <h2>게시물이 존재하지 않습니다.</h2>
     {% endif %}
     <br><br>
+    <form method="get">
     {% if page_list %}
     {% for page in page_list %}
-        <a href="?page={{ page }}" class="page">{{ page }}</a>
+        <a href="?sort={{ now_sort }}&page={{ page }}&search={{ now_search }}" class="page">{{ page }}</a>
     {% endfor %}
     {% endif %}
+    </form>
     <br><br>
 </body>
 </html>
