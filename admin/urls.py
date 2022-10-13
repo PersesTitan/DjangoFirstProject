@@ -16,19 +16,20 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from board.views import RemoveBoard, EditBoard, OneBoard, CreateBoard, ListBoard
 from manage import Make
-from users.views import LoginUser, CreateUsers
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('boards/', ListBoard.as_view(), name="boards"),
-    path('boards/add/', CreateBoard.as_view(), name="board-add"),
-    path('boards/<int:board_id>/', OneBoard.as_view(), name="board-item"),
-    path('boards/<int:board_id>/edit/', EditBoard.as_view(), name="board-edit"),
-    path('boards/<int:board_id>/remove/', RemoveBoard.as_view(), name="board-remove"),
-    path('users/login/', LoginUser.as_view(), name="login"),
-    path('users/singup/', CreateUsers.as_view(), name="singup"),
 ]
 
-# urlpatterns += Make.add_path(path)
+urlpatterns += Make.add_path(path)
+
+# urlpatterns += [
+#     path('boards/', ListBoard.as_view(), name="boards"),
+#     path('boards/add/', CreateBoard.as_view(), name="board-add"),
+#     path('boards/<int:board_id>/', OneBoard.as_view(), name="board-item"),
+#     path('boards/<int:board_id>/edit/', EditBoard.as_view(), name="board-edit"),
+#     path('boards/<int:board_id>/remove/', RemoveBoard.as_view(), name="board-remove"),
+#     path('users/login/', LoginUser.as_view(), name="login"),
+#     path('users/singup/', CreateUsers.as_view(), name="singup"),
+# ]

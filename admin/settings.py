@@ -47,8 +47,8 @@ INSTALLED_APPS = [
 ]
 
 #  ADD INSTALLED_APPS START
-# INSTALLED_APPS += Make.add_INSTALLED_APPS()
-INSTALLED_APPS += ['board.apps.BoardConfig', 'users.apps.UsersConfig']
+INSTALLED_APPS += Make.add_INSTALLED_APPS()
+# INSTALLED_APPS += ['board.apps.BoardConfig', 'users.apps.UsersConfig']
 #  END INSTALLED_APPS START
 
 
