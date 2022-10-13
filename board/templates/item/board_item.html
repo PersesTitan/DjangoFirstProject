@@ -77,8 +77,10 @@
         </fieldset>
     {% endfor %}
     {% endif %}
-
     <br>
+    {% if user %}
+        댓글 : {{ user }}
+    {% endif %}
     <form method="post">
         <textarea name="command" placeholder="댓글 내용"></textarea>
         {% if messages %}
