@@ -12,20 +12,45 @@ def get_user(request):
     return ID_REPOSITORY.get(request.COOKIES.get('id'))
 
 
+class Main(View):  #
+    def get(self, request):
+        return render(request, 'index.html')
+
+
 # Create your views here.
 class ListBoard(View):  # boards/   boards
     def get(self, request):
         page = request.GET.get('page', 1)
+        sort = request.GET.get('sort', 'create_date_new')
+        search = request.GET.get('search', '')
+        sort_list = [
+            {'create_date_new': {"name": '최신 생성일 순', 'check': sort == 'create_date_new'}},
+            {'create_date_old': {"name": '오래된 생성일 순', 'check': sort == 'create_date_old'}},
+            {'good': {"name": '좋아요 내림차 순', 'check': sort == 'good'}},
+            {'good_reverse': {"name": '좋아요 오르차 순', 'check': sort == 'good_reverse'}},
+        ]
+
         user = get_user(request)
-        content = {}
+        content = {'now_page': page,
+                   'now_sort': sort,
+                   'now_search': search,
+                   'sort_list': sort_list,
+                   }
         if user is not None:
             content["username"] = user.username
 
-        board_list = Board.objects.order_by('-create_date')
+        if sort == 'create_date_new':
+            board_list = Board.objects.order_by('-create_date')
+        elif sort == 'create_date_old':
+            board_list = Board.objects.order_by('create_date')
+        elif sort == 'good':
+            board_list = Board.objects.order_by('-good_count')
+        else:
+            board_list = Board.objects.order_by('good_count')
         li = list()
         for value, board in zip(board_list.values(), board_list.all()):
-            value['good'] = len(board.good.all())
-            li.append(value)
+            if search in board.title:
+                li.append(value)
 
         paginator = Paginator(li, 5)
         page = paginator.get_page(page)
@@ -86,6 +111,7 @@ class OneBoard(View):  # boards/<int:board_id>/    board-item
                    "check_user": check_user}
         if (user is not None) and (user in board.good.all()):
             context["good_check"] = True
+        context['user'] = user
         return render(request, 'item/board_item.html', context)
 
     def post(self, request, board_id):
@@ -98,9 +124,12 @@ class OneBoard(View):  # boards/<int:board_id>/    board-item
                 if board in user.good.all():
                     user.good.remove(board)
                     board.good.remove(user)
+                    board.good_count = len(board.good.all())
                 else:
                     user.good.add(board)
                     board.good.add(user)
+                    board.good_count = len(board.good.all())
+                board.save()
             elif request.POST.get('command_send') is not None:
                 command_value = request.POST.get('command')
                 if not check_blank(command_value, '댓글 내용', request):
