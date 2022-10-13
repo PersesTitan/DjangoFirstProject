@@ -42,7 +42,9 @@ class Make:
                         end = line.index("(")
 
                         remark = line[line.index("#") + 1:].strip().split()
-                        if len(remark) == 1:
+                        if not remark:
+                            path_list.append(get_class(dirs, line[start:end].strip(), '', path))
+                        elif len(remark) == 1:
                             path_list.append(get_class(dirs, line[start:end].strip(), remark[0], path))
                         else:
                             path_list.append(get_class(dirs, line[start:end].strip(), remark[0], path, remark[1]))
