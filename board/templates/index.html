@@ -3,9 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <title>Home</title>
+    <style>
+        a {
+            text-decoration: none;
+            color: black;
+            background-color: LightGray;
+            border-radius: 10%;
+            padding: 10px;
+            margin: 10px;
+        }
+
+        a:hover {
+            background-color: Gray;
+            color: white;
+        }
+
+        .center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+    </style>
 </head>
 <body>
-    <h1>Home</h1>
-
+    <div class="center">
+        <table>
+            <tr><th><h1>홈페이지</h1></th></tr>
+            <tr><td>
+                <a href="/users/login/">로그인</a>
+                <a href="/users/singup/">회원가입</a>
+                <a href="/boards/">게시글</a>
+            </td></tr>
+        </table>
+    </div>
 </body>
 </html>
