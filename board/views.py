@@ -1,3 +1,5 @@
+import logging
+
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect
 from django.utils.decorators import method_decorator
@@ -7,8 +9,13 @@ from django.views.decorators.csrf import csrf_exempt
 from board.models import Board, Command
 from users.views import ID_REPOSITORY, check_blank
 
+import logging
+
+logger = logging.getLogger()
+
 
 def get_user(request):
+    print(ID_REPOSITORY)
     return ID_REPOSITORY.get(request.COOKIES.get('id'))
 
 
@@ -23,6 +30,13 @@ class ListBoard(View):  # boards/   boards
         page = request.GET.get('page', 1)
         sort = request.GET.get('sort', 'create_date_new')
         search = request.GET.get('search', '')
+        username_search = request.GET.get('username_search', '')
+        # page_link = "?"
+        # li = list()
+        # for item in ["page", "sort", "search", "username_search"]:
+        #     "now_" + item
+        #     li.append(f"{item}={eval()}")
+        # page_link += "&".join(li)
         sort_list = [
             {'create_date_new': {"name": '최신 생성일 순', 'check': sort == 'create_date_new'}},
             {'create_date_old': {"name": '오래된 생성일 순', 'check': sort == 'create_date_old'}},
@@ -35,6 +49,7 @@ class ListBoard(View):  # boards/   boards
                    'now_sort': sort,
                    'now_search': search,
                    'sort_list': sort_list,
+                   'now_username_search': username_search
                    }
         if user is not None:
             content["username"] = user.username
@@ -49,7 +64,7 @@ class ListBoard(View):  # boards/   boards
             board_list = Board.objects.order_by('good_count')
         li = list()
         for value, board in zip(board_list.values(), board_list.all()):
-            if search in board.title:
+            if search in board.title and username_search in board.user.username:
                 li.append(value)
 
         paginator = Paginator(li, 5)

@@ -94,5 +94,6 @@ class CreateUsers(View):  # users/singup/   singup
             )
             return redirect('login')
         except IntegrityError as mes:
-            messages.error(request, mes)
+            if str(mes) == 'UNIQUE constraint failed: users_user.username':
+                messages.error(request, '이미 존재하는 유저이름입니다.')
             return redirect('singup')

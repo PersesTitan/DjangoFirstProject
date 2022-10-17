@@ -69,7 +69,10 @@
     <hr>
     <form method="get">
         <div class="right">
-            <p><input name="search" value="{{ now_search }}"><button style="submit">검색</button></p>
+            <p>
+                <input name="search" value="{{ now_search }}" placeholder="검색">
+                <input name="username_search" value="{{ now_username_search }}" placeholder="작성자">
+            </p>
             <select style="submit" name="sort">
             {% for key in sort_list %}
                 {% for k, v in key.items %}
@@ -82,7 +85,7 @@
             {% endfor %}
         </select>
         <input type="hidden" name="page" value="{{ now_page }}">
-        <button style="submit">정렬</button>
+        <button style="submit">조회</button>
         </div>
     </form>
     {% if boards %}
@@ -104,7 +107,7 @@
     <form method="get">
     {% if page_list %}
     {% for page in page_list %}
-        <a href="?sort={{ now_sort }}&page={{ page }}&search={{ now_search }}" class="page">{{ page }}</a>
+        <a href="?sort={{ now_sort }}&page={{ page }}&search={{ now_search }}&username_search={{ now_username_search }}" class="page">{{ page }}</a>
     {% endfor %}
     {% endif %}
     </form>
