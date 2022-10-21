@@ -1,5 +1,7 @@
 import uuid
+from re import match
 
+from django.core.handlers.wsgi import WSGIRequest
 from django.db import IntegrityError
 from django.db.models import Q
 from django.shortcuts import render, redirect
@@ -32,6 +34,29 @@ def check_blank(li: str, kind: str, request):
         return True
 
 
+def check_name(name: str, request: WSGIRequest):
+    boolean = False
+    if match("^[0-9]+$", name):
+        messages.error(request, "아이디에 숫자만 존재할 수 없습니다.")
+        boolean = True
+    return boolean
+
+
+def check_password(name: str, password: str, email: str, request: WSGIRequest):
+    boolean = check_name(name, request)
+    password_message = "비밀번호가 취약합니다. "
+    if name == password:
+        messages.error(request, password_message + "(아이디와 비밀번호가 똑같습니다.)")
+        boolean = True
+    if len(password) < 4:
+        messages.error(request, password_message + "(비밀번호 길이가 4자리 미만입니다.)")
+        boolean = True
+    if not match("[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]$", email):
+        messages.error(request, "이메일 형식이 일치하지 않습니다.")
+        boolean = True
+    return boolean
+
+
 # Create your views here.
 # @login_required
 class LoginUser(View):  # users/login/    login
@@ -55,7 +80,6 @@ class LoginUser(View):  # users/login/    login
             else:
                 UUID = str(uuid.uuid4())
                 set_id(UUID, user[0])
-
                 url = request.GET.get('next')
                 response = redirect('boards' if (url is None or not url) else url)
                 response.set_cookie('id', UUID)
@@ -64,7 +88,7 @@ class LoginUser(View):  # users/login/    login
 
 @method_decorator(csrf_exempt, name='dispatch')
 class CreateUsers(View):  # users/singup/   singup
-    def get(self, request):
+    def get(self, request: WSGIRequest):
         return render(request, 'singup.html')
 
     def post(self, request):
@@ -84,7 +108,7 @@ class CreateUsers(View):  # users/singup/   singup
             if password_check != password:
                 messages.error(request, "비밀번호가 일치하지 않습니다.")
                 b = b or True
-
+            b = check_password(username, password, email, request) or b
             if b:
                 return redirect('singup')
             User.objects.create(
@@ -97,3 +121,18 @@ class CreateUsers(View):  # users/singup/   singup
             if str(mes) == 'UNIQUE constraint failed: users_user.username':
                 messages.error(request, '이미 존재하는 유저이름입니다.')
             return redirect('singup')
+
+
+class EditUsers(View):  # users/edit/
+    def get(self, request: WSGIRequest):
+        edit = request.GET.get("edit", "false") == "true"
+        user = get_user(request)
+        if user is None:
+            return redirect('/users/login/?next=/users/edit/')
+        return render(request, 'user_setting_edit.html' if edit else 'user_setting.html', {"user": user})
+
+    def post(self, request: WSGIRequest):
+        user = get_user(request)
+        if user is None:
+            return redirect('/users/login/?next=/users/edit/')
+        return

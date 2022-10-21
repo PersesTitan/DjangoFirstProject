@@ -35,10 +35,11 @@
             <tr><th colspan="2" style="font-size: 2em; padding: 10px">{{ user }}</th></tr>
             <tr><td><br>
                 <button name="logout" type="submit">로그아웃</button>
+                <button type="button" onclick="location.href='/users/edit'">정보</button>
             </td></tr>
         {% else %}
             <tr><th colspan="2" style="font-size: 2em">로그인</th></tr>
-            <tr><td>아이디</td><td><input name="id"></td></tr>
+            <tr><td>아이디</td><td><input name="id" type="text"></td></tr>
             <tr><td>비밀번호</td><td><input name="password" type="password"></td></tr>
             {% if messages %}
             {% for message in messages %}

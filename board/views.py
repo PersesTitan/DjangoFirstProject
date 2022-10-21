@@ -9,13 +9,8 @@ from django.views.decorators.csrf import csrf_exempt
 from board.models import Board, Command
 from users.views import ID_REPOSITORY, check_blank
 
-import logging
-
-logger = logging.getLogger()
-
 
 def get_user(request):
-    print(ID_REPOSITORY)
     return ID_REPOSITORY.get(request.COOKIES.get('id'))
 
 
