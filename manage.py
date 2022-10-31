@@ -7,15 +7,12 @@ import sys
 def get_class(pa: str, class_name: str, url: str, path, name=None):
     exec(f"from {pa}.views import {class_name}")
     if name is None:
-        print(f"path(\'{url}\', {class_name}.as_view())")
         return eval(f"path(\'{url}\', {class_name}.as_view())")
     else:
-        print(f"path(\'{url}\', {class_name}.as_view(), name=\"{name}\")")
         return eval(f"path(\'{url}\', {class_name}.as_view(), name=\"{name}\")")
 
 
 class Make:
-
     @classmethod
     def add_INSTALLED_APPS(cls, pwd=str(os.getcwd())):
         INSTALLED_APPS_LIST = list()
@@ -27,7 +24,6 @@ class Make:
                         start = line.index("class") + len("class")
                         end = line.index("(")
                         INSTALLED_APPS_LIST.append(f"{dirs}.apps.{line[start:end].strip()}")
-        print(INSTALLED_APPS_LIST)
         return set(INSTALLED_APPS_LIST)
 
     @classmethod
@@ -48,7 +44,6 @@ class Make:
                             path_list.append(get_class(dirs, line[start:end].strip(), remark[0], path))
                         else:
                             path_list.append(get_class(dirs, line[start:end].strip(), remark[0], path, remark[1]))
-        print(path_list)
         return set(path_list)
 
 
