@@ -14,6 +14,7 @@ class Board(models.Model):
     good_count = models.IntegerField(default=0)
     user = models.ForeignKey(User, models.CASCADE)
     command = models.ManyToManyField('Command', related_name='command')
+    visit = models.IntegerField(default=0)
 
 
 class Command(models.Model):
