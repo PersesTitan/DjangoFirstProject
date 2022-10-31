@@ -34,6 +34,11 @@ ALLOWED_HOSTS = ['*']
 DEBUG = (os.environ.get('DEBUG', 'True'))
 AUTH_USER_MODEL = 'users.User'
 
+# 이미지
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+
+
 # Application definition
 
 INSTALLED_APPS = [
