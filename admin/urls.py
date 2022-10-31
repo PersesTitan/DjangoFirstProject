@@ -13,9 +13,11 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
 
+from admin import settings
 from manage import Make
 
 urlpatterns = [
@@ -24,12 +26,4 @@ urlpatterns = [
 
 urlpatterns += Make.add_path(path)
 
-# urlpatterns += [
-#     path('boards/', ListBoard.as_view(), name="boards"),
-#     path('boards/add/', CreateBoard.as_view(), name="board-add"),
-#     path('boards/<int:board_id>/', OneBoard.as_view(), name="board-item"),
-#     path('boards/<int:board_id>/edit/', EditBoard.as_view(), name="board-edit"),
-#     path('boards/<int:board_id>/remove/', RemoveBoard.as_view(), name="board-remove"),
-#     path('users/login/', LoginUser.as_view(), name="login"),
-#     path('users/singup/', CreateUsers.as_view(), name="singup"),
-# ]
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
