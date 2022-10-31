@@ -50,7 +50,13 @@
 </head>
 <body>
     <h1>{{ board.title }}</h1>
-    <p><b>작성자 : {{ board.username }}</b></p>
+    <p>
+        <b><a href="/users/edit/{{ board.user.pk }}/" style="text-decoration: none; border: outset; padding: 10px">
+            <img style="vertical-align: middle;" height="30px" width="30px" src="data:image/{{ image.exi }};base64, {{ image.data }}" alt="/users/edit/{{ board.user.pk }}/">
+            {{ board.username }}
+        </a></b>
+    </p>
+    <p>조회수 : {{ board.visit }}</p>
     <b>작성일 : {{ board.create_date | date:'Y년 m월 d일 - h시 i분' }}</b><br>
     <b>최근 수정일 : {{ board.update_date | date:'Y년 m월 d일 - h시 i분'  }}</b>
     <hr>
@@ -70,6 +76,7 @@
             {{ command.value.content|linebreaksbr }}
             {% if command.login_check %}
             <form method="post">
+                {% csrf_token %}
                 <input name="command_id" value="{{ command.value.id }}" type="hidden">
                 <button type="submit" name="command_remove">삭제</button>
             </form>
@@ -82,6 +89,7 @@
         댓글 : {{ user }}
     {% endif %}
     <form method="post">
+        {% csrf_token %}
         <textarea name="command" placeholder="댓글 내용"></textarea>
         {% if messages %}
         {% for message in messages %}

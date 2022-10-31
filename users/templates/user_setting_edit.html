@@ -4,21 +4,10 @@
     <meta charset="UTF-8">
     <title>Users</title>
     <style>
-        div.error {
-        color: red
-    }
-
     table {
-        text-align: center;
+        text-align: left;
+        width: 100%;
     }
-
-    .center {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-    }
-
     table {
         border: 1px solid black;
         border-collapse: collapse;
@@ -27,38 +16,88 @@
     th, td {
         border: 1px solid #444444;
     }
+
+    a {
+        text-decoration: none;
+    }
+
+    a.button {
+        border-radius: 5px;
+        background-color: blue;
+        color: white;
+        padding: 5px 10px;
+        font-size: 0.9em;
+    }
+
+    a.button:hover {
+        background-color: red;
+    }
+
+    tr {
+        text-align: center;
+    }
     </style>
 </head>
 <body>
     <div class="center">
         <table>
-            <form method="post">
-            <tr><th colspan="2" style="font-size: 2em">설정</th></tr>
-            <tr><td>생성일</td><td>{{ user.date_joined | date:'Y년 m월 d일 - h시 i분' }}</tr>
-            <tr><td>아이디</td><td><input value="{{ user.username }}" type="text"></td></tr>
-            <tr><td>비밀번호</td><td><input value="{{ user.password }}" type="password"></td></tr>
-            <tr><td>이메일</td><td><input value="{{ user.email }}" type="text"></td></tr>
+        <tr>
+            <th style="font-size: 2em; text-align: left">
+                <img style="vertical-align: middle;" height="50px" width="50px" src="data:image/{{ image.exi }};base64, {{image.data}}" alt="#">
+                {{ user.username }}
+            </th>
+            <th>
+                <form method="get" style="display: inline"><button type="submit" name="edit" value="false" style="padding: 10px 30px;">취소</button></form>
+                <button form="save" type="submit" name="edit" style="padding: 10px 30px">저장</button>
+            </th>
+        </tr>
+
+        <tr><th colspan="2">
+            <form method="post" enctype="multipart/form-data" style="text-align: left">
+                {% csrf_token %}
+                <input type="file" name="files" accept="png, jpg">
+                <button type="submit" name="upload_file">사진 등록</button>
+            </form>
+        </th></tr>
+
+        <tr>
+            <td><b>생성일</b></td>
+            <td>{{ user.date_joined | date:'Y년 m월 d일 - h시 i분' }}</td>
+        </tr>
+        <form method="post" id="save">
+            {% csrf_token %}
             <tr>
-                <td colspan="2">
-                <details>
-                    <summary>좋아요한 블로그</summary>
-                    {% for goods in user.good.all %}
-                        <br><a href="/boards/{{ goods.id }}">{{ goods.title }}</a>
-                    {% endfor %}
-                </details>
-                </td>
+                <td><b>아이디</b></td>
+                <td><label><input value="{{ user.username }}" type="text" name="username"></label></td>
             </tr>
             <tr>
-                <td style="border: 0">
-                <button type="submit">저장</button></form>
-                </td>
-                <td style="border: 0">
-                    <form method="get"  style="display: inline">
-                    <button type="submit" name="edit" value="false">취소</button>
-                    </form>
-                </td>
+                <td><b>비밀번호</b></td>
+                <td><label><input value="{{ user.password }}" type="password" name="password"></label></td>
             </tr>
+            <tr>
+                <td><b>비밀번호 확인</b></td>
+                <td><label><input value="{{ user.password }}" type="password" name="password-check"></label></td>
+            </tr>
+            <tr>
+                <td><b>이메일</b></td>
+                <td><label><input value="{{ user.email }}" type="text" name="email"></label></td>
+            </tr>
+        </form>
+
+                <tr><th colspan="2" style="font-size: 1.5em; text-align: left">작성한 블로그</th></tr>
+        {% if boards %}
+            {% for board in boards %}
+            <tr><td colspan="2" style="text-align: left; padding-left: 10px; font-weight: bold">
+                <p><a href="/boards/{{ board.pk }}/">{{ board.title }}</a></p>
+            </td></tr>
+            {% endfor %}
+        {% else %}
+            <tr><td colspan="2">
+                <p>작성한 블로그가 없습니다.</p>
+            </td></tr>
+        {% endif %}
         </table>
+        <p><a class="button" href="/boards/">게시판</a></p>
     </div>
 </body>
 </html>

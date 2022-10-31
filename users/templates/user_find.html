@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>유저 페이지</title>
+</head>
+<style>
+    table {
+        text-align: left;
+        width: 100%;
+    }
+    table {
+        border: 1px solid black;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        border: 1px solid #444444;
+    }
+
+    a {
+        text-decoration: none;
+    }
+
+    a.button {
+        border-radius: 5px;
+        background-color: blue;
+        color: white;
+        padding: 5px 10px;
+        font-size: 0.9em;
+    }
+
+    a.button:hover {
+        background-color: red;
+    }
+
+</style>
+<body>
+    <table>
+        <tr>
+            <th style="font-size: 2em;">
+                <img style="vertical-align: middle;" height="50px" width="50px" src="data:image/{{ image.exi }};base64, {{image.data}}" alt="#">
+                {{ user.username }}
+            </th>
+        </tr>
+        <tr><th colspan="2" style="padding-left: 10px">
+            <p>
+                <form method="post" style="display: inline">
+                {% csrf_token %}
+                {% if follow_check %}
+                <button name="follow" type="submit">{{ follow }} 취소</button>
+                {% else %}
+                <button name="follow" type="submit">{{ follow }} 팔로우</button>
+                {% endif %}
+                </form>
+            </p>
+        </th></tr>
+        <tr><th colspan="2" style="font-size: 1.5em">작성한 블로그</th></tr>
+        {% if boards %}
+            {% for board in boards %}
+            <tr><td>
+                <p><a style="padding-left: 10px" href="/boards/{{ board.pk }}/">{{ board.title }}</a></p>
+            </td></tr>
+            {% endfor %}
+        {% else %}
+            <tr><td>
+                <p>작성한 블로그가 없습니다.</p>
+            </td></tr>
+        {% endif %}
+    </table>
+    <p><a class="button" href="/boards/">게시판</a></p>
+</body>
+</html>
