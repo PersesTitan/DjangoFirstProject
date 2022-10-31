@@ -7,7 +7,7 @@ from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 
 from board.models import Board, Command
-from users.views import ID_REPOSITORY, check_blank
+from users.views import ID_REPOSITORY, check_blank, read_image, get_base
 
 
 def get_user(request):
@@ -26,17 +26,13 @@ class ListBoard(View):  # boards/   boards
         sort = request.GET.get('sort', 'create_date_new')
         search = request.GET.get('search', '')
         username_search = request.GET.get('username_search', '')
-        # page_link = "?"
-        # li = list()
-        # for item in ["page", "sort", "search", "username_search"]:
-        #     "now_" + item
-        #     li.append(f"{item}={eval()}")
-        # page_link += "&".join(li)
         sort_list = [
             {'create_date_new': {"name": '최신 생성일 순', 'check': sort == 'create_date_new'}},
             {'create_date_old': {"name": '오래된 생성일 순', 'check': sort == 'create_date_old'}},
             {'good': {"name": '좋아요 내림차 순', 'check': sort == 'good'}},
-            {'good_reverse': {"name": '좋아요 오르차 순', 'check': sort == 'good_reverse'}},
+            {'good_reverse': {"name": '좋아요 오름차 순', 'check': sort == 'good_reverse'}},
+            {'look': {"name": '조회수 내림차 순', 'check': sort == 'look'}},
+            {'look_reverse': {"name": '조회수 오름차 순', 'check': sort == 'look_reverse'}}
         ]
 
         user = get_user(request)
@@ -44,7 +40,7 @@ class ListBoard(View):  # boards/   boards
                    'now_sort': sort,
                    'now_search': search,
                    'sort_list': sort_list,
-                   'now_username_search': username_search
+                   'now_username_search': username_search,
                    }
         if user is not None:
             content["username"] = user.username
@@ -55,14 +51,14 @@ class ListBoard(View):  # boards/   boards
             board_list = Board.objects.order_by('create_date')
         elif sort == 'good':
             board_list = Board.objects.order_by('-good_count')
+        elif sort == 'look':
+            board_list = Board.objects.order_by('-visit')
+        elif sort == 'look-revers':
+            board_list = Board.objects.order_by('visit')
         else:
             board_list = Board.objects.order_by('good_count')
-        li = list()
-        for value, board in zip(board_list.values(), board_list.all()):
-            if search in board.title and username_search in board.user.username:
-                li.append(value)
 
-        paginator = Paginator(li, 5)
+        paginator = Paginator(board_list.all(), 5)
         page = paginator.get_page(page)
 
         content['boards'] = page.object_list
@@ -70,7 +66,7 @@ class ListBoard(View):  # boards/   boards
         return render(request, 'boards.html', content)
 
 
-@method_decorator(csrf_exempt, name='dispatch')
+# @method_decorator(csrf_exempt, name='dispatch')
 class CreateBoard(View):  # boards/add/  board-add
     def get(self, request):
         user = get_user(request)
@@ -103,10 +99,11 @@ class CreateBoard(View):  # boards/add/  board-add
         return redirect('boards')
 
 
-@method_decorator(csrf_exempt, name='dispatch')
 class OneBoard(View):  # boards/<int:board_id>/    board-item
     def get(self, request, board_id):
         board = Board.objects.get(pk=board_id)
+        board.visit += 1
+        board.save()
         user = get_user(request)
 
         commands = list()
@@ -122,6 +119,9 @@ class OneBoard(View):  # boards/<int:board_id>/    board-item
         if (user is not None) and (user in board.good.all()):
             context["good_check"] = True
         context['user'] = user
+
+        exi, image_data = read_image(board.user.profile_image.name)
+        context['image'] = {"exi": exi, "data": get_base(image_data)}
         return render(request, 'item/board_item.html', context)
 
     def post(self, request, board_id):
@@ -154,7 +154,7 @@ class OneBoard(View):  # boards/<int:board_id>/    board-item
             return redirect(request.META['HTTP_REFERER'])
 
 
-@method_decorator(csrf_exempt, name='dispatch')
+# @method_decorator(csrf_exempt, name='dispatch')
 class EditBoard(View):  # boards/<int:board_id>/edit/    board-edit
     def get(self, request, board_id):
         board = Board.objects.get(pk=board_id)
@@ -186,7 +186,7 @@ class EditBoard(View):  # boards/<int:board_id>/edit/    board-edit
             return redirect('boards')
 
 
-@method_decorator(csrf_exempt, name='dispatch')
+# @method_decorator(csrf_exempt, name='dispatch')
 class RemoveBoard(View):  # boards/<int:board_id>/remove/    board-remove
     def get(self, request, board_id):
         user = get_user(request)
